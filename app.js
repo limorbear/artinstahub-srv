@@ -5,30 +5,12 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
 
+var config = require('./config');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var apiRouter = require('./routes/api');
 
 var app = express();
-
-/*
-var db = mongoose.connnection;
-db.on('error', console.error);
-db.once('open', function(){
-  //connceted
-  console.log("connected to mongod server");
-});
-
-mongoose.connect('mongodb://localhost/artinstahub');
-*/
-
-// Node.js의 native Promise 사용
-mongoose.Promise = global.Promise;
-
-//connect to mongodb
-mongoose.connect('mongodb://localhost/artinstahub', { useMongoClient: true })
-  .then(() => console.log('Successfully connected to mongodb'))
-  .catch(e => console.error(e));
 
 
 // view engine setup
@@ -41,8 +23,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.set('jwt-secret', config.secret);
+
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api', apiRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -59,5 +43,13 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+//connect to mongodb
+
+mongoose.Promise = global.Promise; //Node.js의 native Promise 사용
+
+mongoose.connect('mongodb://localhost/artinstahub', { useMongoClient: true })
+  .then(() => console.log('Successfully connected to mongodb'))
+  .catch(e => console.error(e));
 
 module.exports = app;

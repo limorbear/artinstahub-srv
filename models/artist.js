@@ -13,11 +13,7 @@ var portfolioSchema = new Schema({
 })
 
 var artistSchema = new Schema({
-    artist_id: { type: Number, required: true, unique: true },
-
-    user_id: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    user_password: { type: String, required: true, trim: true },
-
+    
     working_name: String,
     real_name: String, //본명, 공개/비공개 여부
     birth_year: Number, //생년, 공개/비공개 여부
@@ -46,13 +42,12 @@ artistSchema.statics.findAll = function () {
     return this.find({});
 };
 
+/* 랜덤한 아티스트 정보를 요청한 만큼 보내주는 메소드 (추후 코딩)
+
 artistSchema.statics.findRandom = function (numberOfItems) {
-    /*var count = this.count();
-    var random = Math.floor(Math.random() * count);
-    var result = this.findOne().skip(random);*/
-    var result = this.findOne();
-    console.log(result);
-    return result;
+    return this.findOne();
 };
+
+*/
 
 module.exports = mongoose.model('artist', artistSchema);
