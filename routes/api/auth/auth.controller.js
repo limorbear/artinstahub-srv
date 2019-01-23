@@ -1,3 +1,4 @@
+var jwt = require('jsonwebtoken');
 var Account = require('../../../models/account');
 
 /* request like bellow:
@@ -54,3 +55,67 @@ exports.register = (req, res) => {
     .then(respond)
     .catch(onError);
 }
+
+/* request like bellow:
+    POST /api/auth/login
+    {
+        username,
+        password
+    }
+*/
+exports.login = (req, res) => {
+    var { username, password } = req.body;
+    var secret = req.app.get('jwt-secret');
+
+    var check = (account) => {
+        if(!account) {
+            //계정이 존재하지 않음
+            throw new Error('계정이 존재하지 않거나 비밀번호가 잃지하지 않음');            
+        } else {
+            //계정이 존재함
+            if(username.verify(password)) {
+                //비밀번호 일치
+                var p = new Promise ((resolve, reject) => {
+                    jwt.sign(
+                        {
+                            _id: account._id,
+                            username: account.username,
+                            admin: account.admin
+                        },
+                        secret,
+                        {
+                            expireIn: '7d',
+                            issuer: '',
+                            subject: 'userInfo'
+                        },
+                        (err, token) => {
+                            if (err) reject(err)
+                            resolve(token)
+                        })
+                })
+                return p;
+            } else {
+                throw new Error('계정이 존재하지 않거나 비밀번호가 잃지하지 않음');
+            }
+        }
+    }
+
+    var respond = (token) => {
+        res.json({
+            message: 'logged in successfully',
+            token
+        });
+    };
+    
+    const onError = (error) => {
+        res.status(403).json({
+            message: error.message
+        });
+    };
+    
+    Account.findOneByUsername(username)
+    .then(check)
+    .then(respond)
+    .catch(onError);
+}
+
