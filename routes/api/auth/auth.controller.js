@@ -73,7 +73,7 @@ exports.login = (req, res) => {
             throw new Error('계정이 존재하지 않거나 비밀번호가 잃지하지 않음');            
         } else {
             //계정이 존재함
-            if(username.verify(password)) {
+            if(account.verify(password)) {
                 //비밀번호 일치
                 var p = new Promise ((resolve, reject) => {
                     jwt.sign(
@@ -84,7 +84,7 @@ exports.login = (req, res) => {
                         },
                         secret,
                         {
-                            expireIn: '7d',
+                            expiresIn: '7d',
                             issuer: '',
                             subject: 'userInfo'
                         },
@@ -119,3 +119,12 @@ exports.login = (req, res) => {
     .catch(onError);
 }
 
+/* request like bellow:
+    GET /api/auth/check
+*/
+exports.check = (req, res) => {
+    res.json({
+        success: true,
+        info: req.decoded
+    });
+}

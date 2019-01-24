@@ -8,7 +8,7 @@ var imageSchema = new Schema({
 
 var portfolioSchema = new Schema({
     type: Number, //포트폴리오 타입: 0=인스타그램작업계정, 1=별도웹사이트, 2=자체포트폴리오
-    link: String, //포트폴리오 링크: 'type'의 value가 0이면 인스타그램 아이디, 1이면 URL, 2면 기입 X
+    link: String, //포트폴리오 링크: 'type'의 value가 0이면 @인스타그램 아이디, 1이면 URL, 2면 기입 X
     working_image: [imageSchema]
 })
 
@@ -28,7 +28,7 @@ var artistSchema = new Schema({
     
     tags: [String],
 
-    secret: [Boolean]
+    secret: [Boolean] //0: 본명 공개 여부 (true: 비공개), 1: 생년 공개 여부, 2: 입학연도 공개 여부, 3: 학과 공개 여부
 });
 
 

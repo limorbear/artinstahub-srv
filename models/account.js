@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var crypto = require('crypto');
+var config = require('../config');
 
 var accountSchema = new Schema({
     username: { type: String, required: true, unique: true, lowercase: true, trim: true },
@@ -9,9 +11,13 @@ var accountSchema = new Schema({
 });
 
 accountSchema.statics.create = function(username, password) {
+    var encryptedPassword = crypto.createHmac('sha1', config.secret)
+                    .update(password)
+                    .digest('base64');
+    
     var account = new this({
         username,
-        password
+        password: encryptedPassword
     });
 
     return account.save();
@@ -22,7 +28,16 @@ accountSchema.statics.findOneByUsername = function(username) {
 }
 
 accountSchema.methods.verify = function(password) {
-    return this.password === password;
+    var encryptedPassword = crypto.createHmac('sha1', config.secret)
+                    .update(password)
+                    .digest('base64');
+
+    return this.password === encryptedPassword;
+}
+
+accountSchema.methods.linkArtistInfo = (artist_id) => {
+    this.artist_info = artist_id;
+    return this.save();
 }
 
 accountSchema.methods.verifyAdmin = function() {
