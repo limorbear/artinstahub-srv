@@ -9,7 +9,6 @@ var Account = require('../../../models/account');
     }
 */
 exports.register = (req, res) => {
-    console.log(req.body)
     var { username, password } = req.body;
     var newAccount = null;
 

@@ -83,11 +83,6 @@ exports.artistFindPortfolio = (req,res) => {
     POST /api/artist/create
 */
 exports.artistCreate = (req, res) => {
-    /* 고쳐야 할 부분 */
-    var linkToAccount = (artist) => {
-        Account.findOneByUsername(req.decoded.username) // token 속 username을 통해 account 찾기
-            .then((account, artist._id) => account.linkArtistInfo) // account 속 artist_info에 artist._id 넣기
-    }
 
     var respond = (artist) => {
         res.json({
@@ -102,8 +97,12 @@ exports.artistCreate = (req, res) => {
         });
     }
 
-    Artist.create(req.body)
-    .then(linkToAccount)
+    Account.findOneByUsername(req.decoded.username)
+    .then((account) => {
+        var payload = Object.assign(req.body, {account: account._id})
+        console.log(account._id)
+        Artist.create(payload)
+    })
     .then(respond)
     .catch(onError);
 }

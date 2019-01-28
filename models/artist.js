@@ -13,7 +13,8 @@ var portfolioSchema = new Schema({
 })
 
 var artistSchema = new Schema({
-    
+    account: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' },
+
     working_name: String,
     real_name: String, //본명, 공개/비공개 여부
     birth_year: Number, //생년, 공개/비공개 여부

@@ -6,7 +6,6 @@ var config = require('../config');
 var accountSchema = new Schema({
     username: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password:  { type: String, required: true, trim: true },
-    artist_info: { type: mongoose.Schema.Types.ObjectId, ref: 'Artist' },
     admin: { type: Boolean, default: false }
 });
 
@@ -17,7 +16,7 @@ accountSchema.statics.create = function(username, password) {
     
     var account = new this({
         username,
-        password: encryptedPassword
+        password: encryptedPassword,
     });
 
     return account.save();
@@ -33,11 +32,6 @@ accountSchema.methods.verify = function(password) {
                     .digest('base64');
 
     return this.password === encryptedPassword;
-}
-
-accountSchema.methods.linkArtistInfo = (artist_id) => {
-    this.artist_info = artist_id;
-    return this.save();
 }
 
 accountSchema.methods.verifyAdmin = function() {
